@@ -1,0 +1,12 @@
+[submodule "monitoring"]
+	path = monitoring
+	url = https://github.com/DiegoMazega/monitoring.git
+[submodule "monitoria_backend"]
+	path = monitoria_backend
+	url = https://github.com/fersasil/monitoria_backend.git
+[submodule "_backend"]
+	path = _backend
+	url = https://github.com/fersasil/monitoria_backend.git
+[submodule "_flutter"]
+	path = _flutter
+	url = https://github.com/DiegoMazega/monitoring.git
