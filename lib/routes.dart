@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:monitoring/screens/list_teaching_assistance/all_teaching_assistence.dart';
-import './screens/Sidebar/sidebar.dart';
 import './screens/Login/sign_in_screen.dart';
 //https://dart.dev/guides/language/effective-dart/style
 

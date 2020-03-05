@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:monitoring/general_widgets/drawer/drawer.dart';
 
-class AllTeachingAssitance extends StatelessWidget {
+class AllTeachingAssitanceScreen extends StatelessWidget {
   static const routeName = "/all-assitances";
 
   @override
