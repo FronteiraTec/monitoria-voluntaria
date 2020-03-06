@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:monitoring/screens/list_teaching_assistance/all_teaching_assistence.dart';
+import './screens/list_teaching_assistance/all_teaching_assistence_screen.dart';
 import './screens/Login/sign_in_screen.dart';
 //https://dart.dev/guides/language/effective-dart/style
 
@@ -10,7 +10,7 @@ class Routes {
     //Place new routes here
     return {
     //  "/": (context) => AllTeachingAssitance(),
-     "/": (context) => AllTeachingAssitance(),
+     "/": (context) => AllTeachingAssitanceScreen(),
      SignInScreen.routeName: (context) => new SignInScreen(),
     //  "/": (context) => new SignInScreen(),
      //Example.routeName: (context) => new Example(),

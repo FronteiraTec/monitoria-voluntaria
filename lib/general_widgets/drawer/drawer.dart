@@ -9,7 +9,7 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.6, //20.0,
+      width: MediaQuery.of(context).size.width * 0.7, //20.0,
       child: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

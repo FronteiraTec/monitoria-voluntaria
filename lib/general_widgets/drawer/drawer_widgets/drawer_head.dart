@@ -3,6 +3,7 @@ import './user_photo_drawer.dart';
 
 class MyDrawerHead extends StatelessWidget {
   final String username = "Maria Joaquina";
+  final String userId = "Fersasil";
 
   @override
   Widget build(BuildContext context) {
@@ -10,9 +11,12 @@ class MyDrawerHead extends StatelessWidget {
       height: MediaQuery.of(context).size.height * .30,
       child: DrawerHeader(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             UserPhoto(),
             Divider(),
+            // Spacer(),
             Text(
               username,
               style: TextStyle(
@@ -20,6 +24,14 @@ class MyDrawerHead extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
+            
+            Container(
+              margin: EdgeInsets.only(top: 3.5),
+              child: Text(
+                "@$userId",
+                style: TextStyle(color: Colors.white),
+              ),
+            )
           ],
         ),
         decoration: BoxDecoration(color: Theme.of(context).primaryColor),

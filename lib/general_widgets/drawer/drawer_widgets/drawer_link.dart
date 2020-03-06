@@ -21,7 +21,7 @@ class DrawerLink extends StatelessWidget {
       ),
       title: Text(
         name,
-        style: TextStyle(fontSize: 20),
+        style: TextStyle(fontSize: 16),
       ),
       onTap: () {
         Navigator.pop(context);
