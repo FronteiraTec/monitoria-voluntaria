@@ -8,7 +8,7 @@ class MyDrawerHead extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * .30,
+      height: MediaQuery.of(context).size.height * .35,
       child: DrawerHeader(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
