@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:monitoring/screens/Monitoring/Monitoring.dart';
 import './routes.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MaterialApp(
+  home: Monitoring()
+));
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
