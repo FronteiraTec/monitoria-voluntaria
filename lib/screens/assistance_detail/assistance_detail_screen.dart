@@ -16,7 +16,7 @@ class AssitanceDetailScreen extends StatelessWidget {
     var date = "17/02";
     var hour = "13:00";
     var local = "UFFS";
-    var numberOpenings = "0";
+    var numberOpenings = "5";
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -34,17 +34,59 @@ class AssitanceDetailScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               AssistanceTitleName(assistanceName: assistanceName),
+              // Divider(),
               AssistenceDetailBar(
                 date: date,
                 hour: hour,
                 local: local,
                 numberOpenings: numberOpenings,
               ),
+
+              UserProfile(),
+
               AssistanceDetailText(assistanceDetail: assistanceDetail),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class UserProfile extends StatelessWidget {
+  const UserProfile({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(5),
+      margin: EdgeInsets.only(left: 10, top: 1, right: 15),
+      child: Row(
+        children: <Widget>[
+          CircleAvatar(
+            child: Icon(Icons.account_circle),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 15),
+            child: Text(
+              "Guilherme Sabino",
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+
+          Spacer(),
+          Container(margin: EdgeInsets.only(right: 5), child: Icon(Icons.verified_user))
+        ],
+      ),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(width: 1, color: Color.fromRGBO(220, 220, 220, 0.9), ),
+          bottom: BorderSide(width: 1, color: Color.fromRGBO(220, 220, 220, 0.9)),
+        ),
+      ),
+      height: MediaQuery.of(context).size.height * 0.12,
     );
   }
 }

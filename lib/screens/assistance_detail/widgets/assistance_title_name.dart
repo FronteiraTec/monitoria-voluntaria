@@ -11,8 +11,9 @@ class AssistanceTitleName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.only(left: 12, top: 20, bottom: 20),
       child: Container(
+        // padding: EdgeInsets.only(top: 8),
         width: double.infinity,
         child: Text(
           assistanceName,

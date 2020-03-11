@@ -19,7 +19,7 @@ class AssistenceDetailBar extends StatelessWidget {
     return Container(
         height: MediaQuery.of(context).size.height * .09,
         width: double.infinity,
-        margin: EdgeInsets.only(left: 15, right: 15),
+        margin: EdgeInsets.only(left: 15, right: 15, bottom: 15),
         decoration: BoxDecoration(
           color: Color.fromRGBO(220, 220, 220, 0.2),
           // border: Border.all(width: 1, color: Colors.grey),
@@ -32,15 +32,18 @@ class AssistenceDetailBar extends StatelessWidget {
             AppItem(icon: Icons.schedule, text: hour, onTap: (){
               //
             }),
-            AppItem(icon: Icons.people, text: numberOpenings, onTap: (){
-              //
-            }),
-            AppItem(icon: Icons.place, text: local, onTap: () {
-              //
-            }),
             AppItem(icon: Icons.event_available, text: date, onTap: (){
               //
             }),
+            
+            AppItem(icon: Icons.place, text: local, onTap: () {
+              //
+            }),
+            
+            AppItem(icon: Icons.people, text: numberOpenings, onTap: (){
+              //
+            }),
+            
           ],
         ),
     );
