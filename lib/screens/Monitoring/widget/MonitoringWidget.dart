@@ -21,7 +21,6 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
       for(var dado in dados){
         Assistances assistance = Assistances(dado["Userid"], dado["id"], dado["title"], dado["body"]);
         assistances.add(assistance);
-        print(assistance.toString());
       }
       return assistances;
     }
@@ -34,8 +33,26 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
         title: Text("Monitoring"), centerTitle: true,
       ),
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: <Widget>[
+              Container(
+              height: 80.0,
+              child: new ListView(
+                scrollDirection: Axis.horizontal,
+                children: new List.generate(10, (int index) {
+                  return new Card(
+                    color: Colors.blue[index * 100],
+                    child: new Container(
+                      width: 50.0,
+                      height: 50.0,
+                      child: new Text("$index"),
+                    ),
+                  );
+                }),
+              ),
+            ),       
+      Expanded(
           child: FutureBuilder<List<Assistances>>(
             future: _data(),
             builder: (context, snapshot){
@@ -49,9 +66,12 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                   break;
                 case ConnectionState.done:
                   if(snapshot.hasError){
-                    print("Erro na conexão");
+                    return Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 60,
+                    );
                   } else{
-                    print("Entrou");
                     return ListView.builder(
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index){
@@ -60,6 +80,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                         return ListTile(
                           title: Text(assis.locale),
                           subtitle: Text(assis.dateTime),
+                          
                         );
                       },
                     );
@@ -69,6 +90,8 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
             } 
           ) 
           ),
+            ])
+      )
     );
   }
 }
