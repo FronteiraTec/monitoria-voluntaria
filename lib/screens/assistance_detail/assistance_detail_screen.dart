@@ -1,9 +1,10 @@
 import "package:flutter/material.dart";
-import 'package:monitoring/screens/Monitoring/widget/Assistances.dart';
 import './widgets/assistance_detail_bar.dart';
 import './widgets/assistance_detail_text.dart';
 import './widgets/my_sliver_app_bar.dart';
 import './widgets/assistance_title_name.dart';
+
+import '../../screens/list_assistances/widget/Assistances.dart';
 
 class AssitanceDetailScreen extends StatelessWidget {
   static const routeName = "/oi";

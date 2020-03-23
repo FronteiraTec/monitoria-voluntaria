@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:monitoring/screens/Monitoring/widget/MonitoringWidget.dart';
+import '../../screens/list_assistances/widget/MonitoringWidget.dart';
 
-class Monitoring extends StatelessWidget {
+class ListAssistancesScreen extends StatelessWidget {
   static const String routeName = "/";
 
   @override
