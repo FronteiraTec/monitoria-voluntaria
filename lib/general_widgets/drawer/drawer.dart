@@ -16,7 +16,7 @@ class MyDrawer extends StatelessWidget {
           children: <Widget>[
             MyDrawerHead(),
             DrawerLink(name: "Monitorias", routeName: "/", icon: Icons.book),
-            DrawerLink(name: "Link 2", routeName: "/"),
+            DrawerLink(name: "Oi", routeName: "/oi"),
             DrawerLink(name: "Link 3", routeName: "/"),
             DrawerLink(name: "Link 4", routeName: "/"),
             DrawerLink(name: "Entrar", routeName: SignInScreen.routeName, icon: Icons.verified_user),
