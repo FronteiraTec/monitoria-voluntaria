@@ -1,30 +1,37 @@
 import 'package:flutter/cupertino.dart';
 
-class Assistances{
-  int _id;
-  int _idd;
-  String _nome;
-  String _locale;
-  String _dateTime;
-  String _description;
-  int _numberParticipants;
-  int _active;
+class Assistances {
+  final int idAssistance;
+  final int idAssistant;
+  final String assistanceName;
+  final int numberParticipants;
+  final String location;
+  final String description;
+  final String schedule;
+  final int course;
+  final int active;
 
-  Assistances(int id, int idd, String locale,String dateTime){
-    this._id = id;
-    this._idd = idd;
-    this._locale = locale;
-    this._dateTime = dateTime;
-  }
+  Assistances({
+    @required this.idAssistance,
+    @required this.idAssistant,
+    @required this.assistanceName,
+    @required this.numberParticipants,
+    @required this.location,
+    @required this.description,
+    @required this.schedule,
+    @required this.course,
+    @required this.active,
+  });
 
-  int get id{
-    return this._id;
-  }
+ int get assistanceId{return idAssistance;}
+int get assistantId=> idAssistant;
+String get name=> assistanceName;
+int get participants=> numberParticipants;
+String get locate=> location;
+String get descript=> description;
+String get date=> schedule;
+int get courses=> course;
+int get actives=> active;
 
-  String get nome{return this._nome;}
-  String get locale{return this._locale;}
-  String get dateTime{return this._dateTime;}
-  String get description{return this._description;}
-
-
+  
 }

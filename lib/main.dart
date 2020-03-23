@@ -3,7 +3,7 @@ import 'package:monitoring/screens/Monitoring/Monitoring.dart';
 import './routes.dart';
 
 void main() => runApp(MaterialApp(
-  home: Monitoring()
+  home: MyApp()
 ));
 
 class MyApp extends StatelessWidget {
