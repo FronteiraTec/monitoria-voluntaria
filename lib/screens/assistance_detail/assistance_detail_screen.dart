@@ -28,12 +28,12 @@ class AssitanceDetailScreen extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              AssistanceTitleName(assistanceName: assis.assistanceName),
+              AssistanceTitleName(assistanceName: assis.title),
               // Divider(),
             
               AssistenceDetailBar(
-                date: assis.schedule.substring(0, 5),
-                hour: "15:48",
+                date: assis.date.toString().substring(8, 10) + "/" + assis.date.toString().substring(5, 7),
+                hour: assis.date.toString().substring(11, 16),
                 local: "Local",
                 numberOpenings: assis.numberParticipants.toString(),
               ),

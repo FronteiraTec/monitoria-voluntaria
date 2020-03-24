@@ -13,32 +13,45 @@ class MonitoringWidget extends StatefulWidget {
   _MonitoringWidgetState createState() => _MonitoringWidgetState();
 }
 
+//TODO: adicionar paginação https://pub.dev/packages/loadmore ou implementar você mesmo! https://medium.com/@KarthikPonnam/flutter-loadmore-in-listview-23820612907d
+
 class _MonitoringWidgetState extends State<MonitoringWidget> {
   Future<List<Assistances>> _data() async {
-    http.Response response =
-        await http.get("http://131.108.55.50:3000/assistance");
+    
+    var queryParameters = {
+      'limit': '10',
+      'offset': '0',
+      "avaliabel": "true"
+    };
+
+    var uri = Uri.http('131.108.55.50:3000', '/assistance', queryParameters);
+
+    
+    http.Response response = await http.get(uri);
 
     var dados = json.decode(response.body);
 
-    var teste = dados[0]["data"];
 
     List<Assistances> assistances = List();
 
-    for (var dado in teste) {
+    print(DateTime.parse(dados[0]["date"]));
+
+    for (var dado in dados) {      
       assistances.add(
         Assistances(
-          active: dado["active"],
-          assistanceName: dado["assistanceName"],
+          title: dado["title"],
           course: dado["course"],
           description: dado["description"],
-          idAssistance: dado["idAssistance"],
-          idAssistant: dado["idAssistant"],
+          idAssistance: dado["assistance_id"],
+          idAssistant: dado["owner_id"],
           location: dado["location"],
-          numberParticipants: dado["numberParticipants"],
-          schedule: dado["schedule"],
+          numberParticipants: dado["number_participants"],
+          date: DateTime.parse(dado["date"]),
         ),
       );
     }
+
+    print("OI");
 
     return assistances;
   }
@@ -99,7 +112,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                             List<Assistances> assitance = snapshot.data;
                             Assistances assis = assitance[index];
                             return ListTile(
-                              title: Text(assis.assistanceName),
+                              title: Text(assis.title),
                               subtitle: Text(assis.location),
                               onTap: () {
                                 Navigator.of(context).pushNamed(
