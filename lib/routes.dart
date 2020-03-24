@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import './screens/list_assistances/list_assistances_screen.dart';
 import './screens/assistance_detail/assistance_detail_screen.dart';
-import './screens/list_teaching_assistance/all_teaching_assistence_screen.dart';
 import './screens/Login/sign_in_screen.dart';
 
 //https://dart.dev/guides/language/effective-dart/style
@@ -11,7 +11,7 @@ class Routes {
   static Map<String, Widget Function(dynamic)> build({@required BuildContext context}){
     //Place new routes here
     return {
-     "/": (context) => AllTeachingAssitanceScreen(),
+     ListAssistancesScreen.routeName: (context) => new ListAssistancesScreen(),
      SignInScreen.routeName: (context) => new SignInScreen(),
      AssitanceDetailScreen.routeName: (ctx) => new AssitanceDetailScreen(),
      //Example.routeName: (context) => new Example(),
