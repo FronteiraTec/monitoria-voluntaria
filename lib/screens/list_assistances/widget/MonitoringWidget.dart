@@ -7,6 +7,8 @@ import '../../../general_widgets/drawer/drawer.dart';
 import '../../../screens/assistance_detail/assistance_detail_screen.dart';
 
 import './Assistances.dart';
+import './CustomSearch.dart';
+import 'Request.dart';
 
 class MonitoringWidget extends StatefulWidget {
   @override
@@ -16,44 +18,12 @@ class MonitoringWidget extends StatefulWidget {
 //TODO: adicionar paginação https://pub.dev/packages/loadmore ou implementar você mesmo! https://medium.com/@KarthikPonnam/flutter-loadmore-in-listview-23820612907d
 
 class _MonitoringWidgetState extends State<MonitoringWidget> {
-  Future<List<Assistances>> _data() async {
-    
-    var queryParameters = {
-      'limit': '10',
-      'offset': '0',
-      "avaliabel": "true"
-    };
-
-    var uri = Uri.http('131.108.55.50:3000', '/assistance', queryParameters);
-
-    
-    http.Response response = await http.get(uri);
-
-    var dados = json.decode(response.body);
-
-
-    List<Assistances> assistances = List();
-
-    print(DateTime.parse(dados[0]["date"]));
-
-    for (var dado in dados) {      
-      assistances.add(
-        Assistances(
-          title: dado["title"],
-          course: dado["course"],
-          description: dado["description"],
-          idAssistance: dado["assistance_id"],
-          idAssistant: dado["owner_id"],
-          location: dado["location"],
-          numberParticipants: dado["number_participants"],
-          date: DateTime.parse(dado["date"]),
-        ),
-      );
-    }
-
-    print("OI");
-
-    return assistances;
+ 
+   var _search = "";
+   var _offset = 0;
+  _data(String search, int offset){
+    Request request = Request();
+    return request.data(search, offset);
   }
 
   @override
@@ -62,6 +32,18 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
       drawer: MyDrawer(),
       appBar: AppBar(
         title: Text("Monitoring"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () async {
+              _search = await showSearch(context: context, delegate: CustomSearch());
+              setState(() {
+                _offset = 0;
+                _data(_search, _offset);
+              });
+            },
+          )
+        ],
       ),
       body: Container(
         padding: EdgeInsets.all(20),
@@ -86,17 +68,17 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
             ),
             Expanded(
               child: FutureBuilder<List<Assistances>>(
-                future: _data(),
+                future: _data(_search, _offset),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
-                      return CircularProgressIndicator();
                       break;
                     case ConnectionState.waiting:
-                      return CircularProgressIndicator();
+                       return Center(
+                        child: CircularProgressIndicator()
+                      );
                       break;
                     case ConnectionState.active:
-                      return CircularProgressIndicator();
                       break;
                     case ConnectionState.done:
                       if (snapshot.hasError) {
@@ -111,14 +93,32 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                           itemBuilder: (context, index) {
                             List<Assistances> assitance = snapshot.data;
                             Assistances assis = assitance[index];
-                            return ListTile(
+                            return GestureDetector(
+                              child: ListTile(
                               title: Text(assis.title),
-                              subtitle: Text(assis.location),
+                              subtitle: Text("Data: ${assis.date.day.toString()}/${assis.date.month.toString()}/${assis.date.year.toString()}\nHora: ${assis.date.hour.toString()}:${assis.date.minute.toString()}"),
                               onTap: () {
                                 Navigator.of(context).pushNamed(
                                     AssitanceDetailScreen.routeName,
                                     arguments: assis);
                               },
+                            ),
+                            onHorizontalDragEnd: (event){
+                              if(event.primaryVelocity > 0){
+                                if(_offset > 0){
+                                  setState(() {
+                                  _offset -= 10;
+                                });
+                                }
+                                
+                              } else{
+                                print('mais');
+                                setState(() {
+                                  _offset += 10;
+                                });
+                              }
+                              
+                            },
                             );
                           },
                         );
