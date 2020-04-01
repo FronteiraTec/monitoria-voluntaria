@@ -14,7 +14,7 @@ class Request{
     var uri;
     if(search == ""){
       uri = Uri.http('131.108.55.50:3000', '/assistance', queryParameters);
-    } else{
+    }else{
       uri = Uri.http('131.108.55.50:3000', '/assistance/name/$search', queryParameters);
     }
     
@@ -22,27 +22,12 @@ class Request{
 
     var dados = json.decode(response.body);
 
-
     List<Assistances> assistances = List();
+    
 
-    // print(DateTime.parse(dados[0]["date"]));
-
-    for (var dado in dados) {      
-      assistances.add(
-        Assistances(
-          title: dado["assistance_title"],
-          description: dado["assistance_description"],
-          idAssistance: dado["assistance_id"],
-          idAssistant: dado["assistance_owner_id"],
-          location: dado["assistance_local_id"],
-          numberParticipants: dado["assistance_num_participants"],
-          date: DateTime.parse(dado["assistance_date"]),
-        ),
-      );
-    }
-
-    print("OI");
-
+  for(var dado in dados){ 
+    assistances.add(Assistances.fromJson(dado));
+  }
     return assistances;
   }
 

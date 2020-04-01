@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'dart:convert';
 
 import '../../../general_widgets/drawer/drawer.dart';
 import '../../../screens/assistance_detail/assistance_detail_screen.dart';
 
 import './Assistances.dart';
 import './CustomSearch.dart';
-import 'Request.dart';
+import './Request.dart';
 
 class MonitoringWidget extends StatefulWidget {
   @override
@@ -37,10 +34,8 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
             icon: Icon(Icons.search),
             onPressed: () async {
               _search = await showSearch(context: context, delegate: CustomSearch());
-              setState(() {
-                _offset = 0;
-                _data(_search, _offset);
-              });
+              _data(_search, _offset);
+              _offset = 0;
             },
           )
         ],
@@ -50,16 +45,15 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
         child: Column(
           children: <Widget>[
             Container(
-              height: 80.0,
+              height: 50.0,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: List.generate(
                   10,
                   (int index) => Card(
-                    color: Colors.blue[index * 100],
+                    color: Colors.lightGreen[index * 100],
                     child: Container(
-                      width: 50.0,
-                      height: 50.0,
+                      width: 80.0,
                       child: Text("$index"),
                     ),
                   ),
@@ -110,9 +104,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                                   _offset -= 10;
                                 });
                                 }
-                                
                               } else{
-                                print('mais');
                                 setState(() {
                                   _offset += 10;
                                 });
