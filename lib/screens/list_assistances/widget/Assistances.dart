@@ -19,6 +19,18 @@ class Assistances {
     @required this.date,
   });
 
+  factory Assistances.fromJson(var dado){
+  return Assistances(
+          title: dado["assistance_title"],
+          description: dado["assistance_description"],
+          idAssistance: dado["assistance_id"],
+          idAssistant: dado["assistance_owner_id"],
+          location: dado["assistance_local_id"],
+          numberParticipants: dado["assistance_num_participants"],
+          date: DateTime.parse(dado["assistance_date"])
+          );
+  }
+
   int get assistanceId {
     return idAssistance;
   }
