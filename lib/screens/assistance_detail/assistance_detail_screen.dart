@@ -4,14 +4,14 @@ import './widgets/assistance_detail_text.dart';
 import './widgets/my_sliver_app_bar.dart';
 import './widgets/assistance_title_name.dart';
 
-import '../../screens/list_assistances/widget/Assistances.dart';
+import '../../models/assistanceModel.dart';
 
 class AssitanceDetailScreen extends StatelessWidget {
   static const routeName = "/oi";
 
   @override
   Widget build(BuildContext context) {
-    final Assistances assis = ModalRoute.of(context).settings.arguments;
+    final Assistance assis = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(

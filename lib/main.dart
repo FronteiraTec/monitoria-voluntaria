@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:monitoring/test.dart';
 import 'package:provider/provider.dart';
 import './routes.dart';
 import './theme.dart';
@@ -20,8 +19,6 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        // home: Test(),
-        //TODO: move theme to another file to keep main clean?
         theme: theme,
         routes: Routes.build(context),
       ),

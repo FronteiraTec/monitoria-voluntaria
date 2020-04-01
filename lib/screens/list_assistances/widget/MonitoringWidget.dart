@@ -1,28 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:monitoring/models/assistanceModel.dart';
+import 'package:provider/provider.dart';
 
+import '../../../providers/assistanceProvider.dart';
 import '../../../general_widgets/drawer/drawer.dart';
 import '../../../screens/assistance_detail/assistance_detail_screen.dart';
-
-import './Assistances.dart';
 import './CustomSearch.dart';
-import './Request.dart';
 
-class MonitoringWidget extends StatefulWidget {
-  @override
-  _MonitoringWidgetState createState() => _MonitoringWidgetState();
-}
-
-//TODO: adicionar paginação https://pub.dev/packages/loadmore ou implementar você mesmo! https://medium.com/@KarthikPonnam/flutter-loadmore-in-listview-23820612907d
-
-class _MonitoringWidgetState extends State<MonitoringWidget> {
- 
-   var _search = "";
-   var _offset = 0;
-  _data(String search, int offset){
-    Request request = Request();
-    return request.data(search, offset);
-  }
-
+class MonitoringWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,9 +18,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
-              _search = await showSearch(context: context, delegate: CustomSearch());
-              _data(_search, _offset);
-              _offset = 0;
+              await showSearch(context: context, delegate: CustomSearch());
             },
           )
         ],
@@ -44,83 +27,110 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
         padding: EdgeInsets.all(20),
         child: Column(
           children: <Widget>[
-            Container(
-              height: 50.0,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(
-                  10,
-                  (int index) => Card(
-                    color: Colors.lightGreen[index * 100],
-                    child: Container(
-                      width: 80.0,
-                      child: Text("$index"),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: FutureBuilder<List<Assistances>>(
-                future: _data(_search, _offset),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                      break;
-                    case ConnectionState.waiting:
-                       return Center(
-                        child: CircularProgressIndicator()
-                      );
-                      break;
-                    case ConnectionState.active:
-                      break;
-                    case ConnectionState.done:
-                      if (snapshot.hasError) {
-                        return Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
-                          size: 60,
-                        );
-                      } else {
-                        return ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            List<Assistances> assitance = snapshot.data;
-                            Assistances assis = assitance[index];
-                            return GestureDetector(
-                              child: ListTile(
-                              title: Text(assis.title),
-                              subtitle: Text("Data: ${assis.date.day.toString()}/${assis.date.month.toString()}/${assis.date.year.toString()}\nHora: ${assis.date.hour.toString()}:${assis.date.minute.toString()}"),
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                    AssitanceDetailScreen.routeName,
-                                    arguments: assis);
-                              },
-                            ),
-                            onHorizontalDragEnd: (event){
-                              if(event.primaryVelocity > 0){
-                                if(_offset > 0){
-                                  setState(() {
-                                  _offset -= 10;
-                                });
-                                }
-                              } else{
-                                setState(() {
-                                  _offset += 10;
-                                });
-                              }
-                              
-                            },
-                            );
-                          },
-                        );
-                      }
-                  }
-                      return Container();
-                },
-              ),
-            ),
+            HorizontalCard(),
+            ScrollableList(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ScrollableList extends StatefulWidget {
+  @override
+  _ScrollableListState createState() => _ScrollableListState();
+}
+
+class _ScrollableListState extends State<ScrollableList> {
+  // final String _search;
+  var _offset = 0;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: FutureBuilder(
+        future: _offset == 0 ? Provider.of<AssistanceProvider>(context, listen: false)
+            .fetchAssistances(_offset++) : Future.delayed(Duration(seconds: 0)),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              break;
+            case ConnectionState.waiting:
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+              break;
+            case ConnectionState.active:
+              break;
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                );
+              } else {
+                return Consumer<AssistanceProvider>(
+                  builder: (ctx, data, ch) => ListView.builder(
+                    controller: null,
+                    itemCount: data.items.length,
+                    itemBuilder: (context, i) {
+                      final assistance = data.items[i];
+
+                      return ListItem(assistance: assistance);
+                    },
+                  ),
+                );
+              }
+          }
+          return Container();
+        },
+      ),
+    );
+  }
+}
+
+class ListItem extends StatelessWidget {
+  const ListItem({
+    Key key,
+    @required this.assistance,
+  }) : super(key: key);
+
+  final Assistance assistance;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(assistance.title),
+      subtitle: Text(
+          "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}"),
+      onTap: () {
+        Navigator.of(context).pushNamed(
+            AssitanceDetailScreen.routeName,
+            arguments: assistance);
+      },
+    );
+  }
+}
+
+class HorizontalCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80.0,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: List.generate(
+          10,
+          (int index) => Card(
+            color: Colors.blue[index * 100],
+            child: Container(
+              width: 50.0,
+              height: 50.0,
+              child: Text("$index"),
+            ),
+          ),
         ),
       ),
     );
