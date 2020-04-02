@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:monitoring/models/assistanceModel.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/assistanceProvider.dart';
 import '../../../general_widgets/drawer/drawer.dart';
 import '../../../screens/assistance_detail/assistance_detail_screen.dart';
+import '../../../models/assistanceModel.dart';
+
 import './CustomSearch.dart';
 
 class MonitoringWidget extends StatelessWidget {
@@ -42,24 +43,11 @@ class ScrollableList extends StatefulWidget {
 }
 
 class _ScrollableListState extends State<ScrollableList> {
-  // final String _search;
   var _offset = 0;
   ScrollController _controller;
+  var firstTime = true;
 
-  _scrollListener() {
-     if (_controller.offset  >= _controller.position.maxScrollExtent &&
-        !_controller.position.outOfRange) {
-          Provider.of<AssistanceProvider>(context, listen: false).fetchAssistances(++_offset);
-          print("fim");
-        }
-      else if((_controller.offset <= _controller.position.minScrollExtent &&
-        !_controller.position.outOfRange)){
-          print("Inicio");
-          Provider.of<AssistanceProvider>(context, listen: false).fetchAssistances(--_offset);
-
-        }
- }
-@override
+  @override
   void initState() {
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
@@ -67,16 +55,37 @@ class _ScrollableListState extends State<ScrollableList> {
   }
 
   @override
-  void dispose(){
+  void didChangeDependencies() {
+    if (firstTime) {
+      Provider.of<AssistanceProvider>(context, listen: false).clear();
+      firstTime = false;
+    }
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
     _controller.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  _scrollListener() {
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      Provider.of<AssistanceProvider>(context, listen: false)
+          .fetchAssistances(context, ++_offset);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: FutureBuilder(
-        future: _offset == 0 ? Provider.of<AssistanceProvider>(context, listen: false)
-            .fetchAssistances(_offset++) : Future.delayed(Duration(seconds: 0)),
+        future: _offset == 0
+            ? Provider.of<AssistanceProvider>(context, listen: false)
+                .fetchAssistances(context, _offset++)
+            : Future.delayed(Duration(seconds: 0)),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -101,13 +110,14 @@ class _ScrollableListState extends State<ScrollableList> {
                     controller: _controller,
                     itemCount: data.items.length,
                     itemBuilder: (context, i) {
-                    final assistance = data.items[i];
+                      final assistance = data.items[i];
                       return ListItem(assistance: assistance);
                     },
                   ),
                 );
               }
           }
+          //TODO: implement this return
           return Container();
         },
       ),
@@ -126,13 +136,17 @@ class ListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(assistance.title),
+      title: Text(
+        assistance.title,
+        style: TextStyle(fontSize: 18),
+      ),
       subtitle: Text(
-          "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}"),
+        "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}",
+        style: TextStyle(fontSize: 16),
+      ),
       onTap: () {
-        Navigator.of(context).pushNamed(
-            AssitanceDetailScreen.routeName,
-            arguments: assistance);
+        Navigator.of(context)
+            .pushNamed(AssitanceDetailScreen.routeName, arguments: assistance);
       },
     );
   }
