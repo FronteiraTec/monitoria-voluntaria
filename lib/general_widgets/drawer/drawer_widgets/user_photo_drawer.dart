@@ -11,8 +11,9 @@ class UserPhoto extends StatelessWidget {
           Navigator.of(context).pushNamed("/");
         },
         child: ClipOval(
-          child: Image.network(
-            "https://smk.org.uk/wp-content/uploads/avatar.jpg",
+          child: FadeInImage.assetNetwork(
+            placeholder: 'assets/images/avatarPlaceholder.jpg',
+            image: 'https://placekitten.com/400/400',
           ),
         ),
       ),

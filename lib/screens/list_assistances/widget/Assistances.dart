@@ -5,11 +5,10 @@ class Assistances {
   final int idAssistant;
   final String title;
   final int numberParticipants;
-  final String location;
+  final int location;
   final String description;
   final DateTime date;
-  final int course;
-
+  
   Assistances({
     @required this.idAssistance,
     @required this.idAssistant,
@@ -18,8 +17,19 @@ class Assistances {
     @required this.location,
     @required this.description,
     @required this.date,
-    @required this.course,
   });
+
+  factory Assistances.fromJson(var dado){
+  return Assistances(
+          title: dado["assistance_title"],
+          description: dado["assistance_description"],
+          idAssistance: dado["assistance_id"],
+          idAssistant: dado["assistance_owner_id"],
+          location: dado["assistance_local_id"],
+          numberParticipants: dado["assistance_num_participants"],
+          date: DateTime.parse(dado["assistance_date"])
+          );
+  }
 
   int get assistanceId {
     return idAssistance;
@@ -28,8 +38,7 @@ class Assistances {
   int get assistantId => idAssistant;
   String get name => title;
   int get participants => numberParticipants;
-  String get locate => location;
+  int get locate => location;
   String get descript => description;
   DateTime get dateAssistance => date;
-  int get courses => course;
 }

@@ -26,7 +26,7 @@ class DrawerLink extends StatelessWidget {
       onTap: () {
         Navigator.pop(context);
 
-        Navigator.of(context).pushNamed(routeName);
+        Navigator.of(context).pushReplacementNamed(routeName);
       },
     );
   }
