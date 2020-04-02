@@ -14,9 +14,11 @@ class MyDrawerHead extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            UserPhoto(),
-            Divider(),
-            // Spacer(),
+            Expanded(child: UserPhoto()),
+            Divider(
+              height: 20,
+            ),
+
             Text(
               username,
               style: TextStyle(
@@ -24,14 +26,14 @@ class MyDrawerHead extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            
+
             Container(
               margin: EdgeInsets.only(top: 3.5),
               child: Text(
                 "@$userId",
                 style: TextStyle(color: Colors.white),
               ),
-            )
+            ),
           ],
         ),
         decoration: BoxDecoration(color: Theme.of(context).primaryColor),

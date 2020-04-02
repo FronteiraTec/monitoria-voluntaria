@@ -44,14 +44,26 @@ class ScrollableList extends StatefulWidget {
 class _ScrollableListState extends State<ScrollableList> {
   // final String _search;
   var _offset = 0;
+  var firstTime = true;
 
+  @override
+  void didChangeDependencies() {
+    if (firstTime) {
+      Provider.of<AssistanceProvider>(context, listen: false).clear();
+      firstTime = false;
+    }
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: FutureBuilder(
-        future: _offset == 0 ? Provider.of<AssistanceProvider>(context, listen: false)
-            .fetchAssistances(_offset++) : Future.delayed(Duration(seconds: 0)),
+        future: _offset == 0
+            ? Provider.of<AssistanceProvider>(context, listen: false)
+                .fetchAssistances(_offset++)
+            : Future.delayed(Duration(seconds: 0)),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -102,13 +114,17 @@ class ListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(assistance.title),
+      title: Text(
+        assistance.title,
+        style: TextStyle(fontSize: 18),
+      ),
       subtitle: Text(
-          "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}"),
+        "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}",
+        style: TextStyle(fontSize: 16),
+      ),
       onTap: () {
-        Navigator.of(context).pushNamed(
-            AssitanceDetailScreen.routeName,
-            arguments: assistance);
+        Navigator.of(context)
+            .pushNamed(AssitanceDetailScreen.routeName, arguments: assistance);
       },
     );
   }

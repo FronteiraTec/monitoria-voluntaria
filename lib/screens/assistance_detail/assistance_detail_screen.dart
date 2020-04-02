@@ -11,7 +11,7 @@ class AssitanceDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Assistance assis = ModalRoute.of(context).settings.arguments;
+    final Assistance assistance = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -23,24 +23,24 @@ class AssitanceDetailScreen extends StatelessWidget {
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) =>
             [
-          MySliverAppBar(),
+          MySliverAppBar(title:assistance.title),
         ],
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              AssistanceTitleName(assistanceName: assis.title),
+              AssistanceTitleName(assistanceName: assistance.title),
               // Divider(),
             
               AssistenceDetailBar(
-                date: assis.date.toString().substring(8, 10) + "/" + assis.date.toString().substring(5, 7),
-                hour: assis.date.toString().substring(11, 16),
+                date: assistance.date.toString().substring(8, 10) + "/" + assistance.date.toString().substring(5, 7),
+                hour: assistance.date.toString().substring(11, 16),
                 local: "Local",
-                numberOpenings: assis.numberParticipants.toString(),
+                numberOpenings: assistance.numberParticipants.toString(),
               ),
 
               UserProfile(),
 
-              AssistanceDetailText(assistanceDetail: assis.description),
+              AssistanceDetailText(assistanceDetail: assistance.description),
             ],
           ),
         ),
