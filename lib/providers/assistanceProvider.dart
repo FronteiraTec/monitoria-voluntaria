@@ -2,9 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../models/assistanceModel.dart';
-import '../models/courseModel.dart';
-import '../models/locationModel.dart';
-import '../models/userModel.dart';
 
 import '../helpers/httpHelper.dart';
 
@@ -21,8 +18,6 @@ class AssistanceProvider with ChangeNotifier {
 
     final assistancesJson = res["body"] as List;
 
-    // Location.parseFromMap(assistance)
-
     final assistanceList = assistancesJson.map((assistance) {
       Map<int, Assistance> res = {
         assistance["assistance_id"]: Assistance.parseFromMap(assistance)
@@ -30,10 +25,10 @@ class AssistanceProvider with ChangeNotifier {
       return res;
     }).toList();
 
-    assistanceList.forEach((a) => a.values.toList()[0].course.cacheImage(context));
+    assistanceList
+        .forEach((a) => a.values.toList()[0].course.cacheImage(context));
 
-    //TODO: depois da paginação implementada, verificar se isso realmente precisa ser feito com spread
-    _items = [..._items] + [...assistanceList];
+    _items = _items + assistanceList;
     notifyListeners();
   }
 

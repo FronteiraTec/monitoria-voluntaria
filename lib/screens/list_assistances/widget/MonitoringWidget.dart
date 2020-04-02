@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:monitoring/models/assistanceModel.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/assistanceProvider.dart';
 import '../../../general_widgets/drawer/drawer.dart';
 import '../../../screens/assistance_detail/assistance_detail_screen.dart';
+import '../../../models/assistanceModel.dart';
+
 import './CustomSearch.dart';
 
 class MonitoringWidget extends StatelessWidget {
@@ -42,31 +43,39 @@ class ScrollableList extends StatefulWidget {
 }
 
 class _ScrollableListState extends State<ScrollableList> {
-  // final String _search;
   var _offset = 0;
+  ScrollController _controller;
   var firstTime = true;
-  // final imageHighlt = [];
 
   @override
   void initState() {
-    // TODO: implement initState
-    // image = Image.network(widget.imageUrl, fit: BoxFit.cover,);
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
     super.initState();
   }
-
-
 
   @override
   void didChangeDependencies() {
     if (firstTime) {
       Provider.of<AssistanceProvider>(context, listen: false).clear();
       firstTime = false;
-    
-      // precacheImage(image.image, context);
     }
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
 
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  _scrollListener() {
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      Provider.of<AssistanceProvider>(context, listen: false)
+          .fetchAssistances(context, ++_offset);
+    }
   }
 
   @override
@@ -98,17 +107,17 @@ class _ScrollableListState extends State<ScrollableList> {
               } else {
                 return Consumer<AssistanceProvider>(
                   builder: (ctx, data, ch) => ListView.builder(
-                    controller: null,
+                    controller: _controller,
                     itemCount: data.items.length,
                     itemBuilder: (context, i) {
                       final assistance = data.items[i];
-
                       return ListItem(assistance: assistance);
                     },
                   ),
                 );
               }
           }
+          //TODO: implement this return
           return Container();
         },
       ),

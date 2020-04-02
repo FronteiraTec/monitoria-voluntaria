@@ -14,11 +14,11 @@ class MySliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var fadeInImage = FadeInImage.assetNetwork(
-              placeholder: 'assets/images/placeholder_highlight.png',
-              image: imageUrl,
-              fit: BoxFit.cover,
-            );
+    // var fadeInImage = FadeInImage.assetNetwork(
+    //           placeholder: 'assets/images/placeholder_highlight.png',
+    //           image: imageUrl,
+    //           fit: BoxFit.cover,
+    //         );
     return SliverOverlapAbsorber(
       handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
       child: SliverSafeArea(
