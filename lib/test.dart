@@ -18,7 +18,7 @@ class _TestState extends State<Test> {
     if (_controller.offset  >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
           print("fim");
-          Provider.of<AssistanceProvider>(context, listen: false).fetchAssistances(++_offset);
+          Provider.of<AssistanceProvider>(context, listen: false).fetchAssistances(context, ++_offset);
     }
  }
 
@@ -41,7 +41,7 @@ class _TestState extends State<Test> {
       body: Center(
         child: FutureBuilder(
             future: Provider.of<AssistanceProvider>(context, listen: false)
-                .fetchAssistances(0),
+                .fetchAssistances(context, 0),
             builder: (ctx, snapshot) =>
                 snapshot.connectionState == ConnectionState.waiting
                     ? Center(

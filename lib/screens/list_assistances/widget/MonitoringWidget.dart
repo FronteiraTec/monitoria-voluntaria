@@ -45,15 +45,28 @@ class _ScrollableListState extends State<ScrollableList> {
   // final String _search;
   var _offset = 0;
   var firstTime = true;
+  // final imageHighlt = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // image = Image.network(widget.imageUrl, fit: BoxFit.cover,);
+    super.initState();
+  }
+
+
 
   @override
   void didChangeDependencies() {
     if (firstTime) {
       Provider.of<AssistanceProvider>(context, listen: false).clear();
       firstTime = false;
+    
+      // precacheImage(image.image, context);
     }
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+
   }
 
   @override
@@ -62,7 +75,7 @@ class _ScrollableListState extends State<ScrollableList> {
       child: FutureBuilder(
         future: _offset == 0
             ? Provider.of<AssistanceProvider>(context, listen: false)
-                .fetchAssistances(_offset++)
+                .fetchAssistances(context, _offset++)
             : Future.delayed(Duration(seconds: 0)),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {

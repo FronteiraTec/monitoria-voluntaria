@@ -23,16 +23,22 @@ class AssitanceDetailScreen extends StatelessWidget {
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) =>
             [
-          MySliverAppBar(title:assistance.title),
+          MySliverAppBar(
+            title: assistance.title,
+            imageUrl: assistance.course.imageUrl,
+            image: assistance.course.imageWidget,
+          ),
         ],
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               AssistanceTitleName(assistanceName: assistance.title),
               // Divider(),
-            
+
               AssistenceDetailBar(
-                date: assistance.date.toString().substring(8, 10) + "/" + assistance.date.toString().substring(5, 7),
+                date: assistance.date.toString().substring(8, 10) +
+                    "/" +
+                    assistance.date.toString().substring(5, 7),
                 hour: assistance.date.toString().substring(11, 16),
                 local: "Local",
                 numberOpenings: assistance.numberParticipants.toString(),
@@ -71,15 +77,20 @@ class UserProfile extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
           ),
-
           Spacer(),
-          Container(margin: EdgeInsets.only(right: 5), child: Icon(Icons.verified_user))
+          Container(
+              margin: EdgeInsets.only(right: 5),
+              child: Icon(Icons.verified_user))
         ],
       ),
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(width: 1, color: Color.fromRGBO(220, 220, 220, 0.9), ),
-          bottom: BorderSide(width: 1, color: Color.fromRGBO(220, 220, 220, 0.9)),
+          top: BorderSide(
+            width: 1,
+            color: Color.fromRGBO(220, 220, 220, 0.9),
+          ),
+          bottom:
+              BorderSide(width: 1, color: Color.fromRGBO(220, 220, 220, 0.9)),
         ),
       ),
       height: MediaQuery.of(context).size.height * 0.12,
