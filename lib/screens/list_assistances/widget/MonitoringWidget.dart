@@ -44,7 +44,32 @@ class ScrollableList extends StatefulWidget {
 class _ScrollableListState extends State<ScrollableList> {
   // final String _search;
   var _offset = 0;
+  ScrollController _controller;
 
+  _scrollListener() {
+     if (_controller.offset  >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+          Provider.of<AssistanceProvider>(context, listen: false).fetchAssistances(++_offset);
+          print("fim");
+        }
+      else if((_controller.offset <= _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange)){
+          print("Inicio");
+          Provider.of<AssistanceProvider>(context, listen: false).fetchAssistances(--_offset);
+
+        }
+ }
+@override
+  void initState() {
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
+    super.initState();
+  }
+
+  @override
+  void dispose(){
+    _controller.removeListener(_scrollListener);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +98,10 @@ class _ScrollableListState extends State<ScrollableList> {
               } else {
                 return Consumer<AssistanceProvider>(
                   builder: (ctx, data, ch) => ListView.builder(
-                    controller: null,
+                    controller: _controller,
                     itemCount: data.items.length,
                     itemBuilder: (context, i) {
-                      final assistance = data.items[i];
-
+                    final assistance = data.items[i];
                       return ListItem(assistance: assistance);
                     },
                   ),
