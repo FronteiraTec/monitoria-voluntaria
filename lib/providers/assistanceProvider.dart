@@ -4,11 +4,12 @@ import 'package:flutter/widgets.dart';
 import '../models/assistanceModel.dart';
 
 import '../helpers/httpHelper.dart';
+import '../models/assistanceModel.dart';
 
 class AssistanceProvider with ChangeNotifier {
   static const _baseUrl = "131.108.55.50:3000";
   static const _limit = 15;
-  List<Map<int, dynamic>> _items = [];
+  List<Assistance> _items = [];
 
   final http = HttpHelper(_baseUrl);
 
@@ -18,18 +19,19 @@ class AssistanceProvider with ChangeNotifier {
 
     final assistancesJson = res["body"] as List;
 
-    final assistanceList = assistancesJson.map((assistance) {
-      Map<int, Assistance> res = {
-        assistance["assistance_id"]: Assistance.parseFromMap(assistance)
-      };
-      return res;
-    }).toList();
+    final assistanceList = assistancesJson
+        .map(
+          (assistance) => Assistance.parseFromMap(assistance),
+        )
+        .toList();
 
     assistanceList
-        .forEach((a) => a.values.toList()[0].course.cacheImage(context));
+        .forEach((a) => a.course.cacheImage(context));
 
     _items = _items + assistanceList;
     notifyListeners();
+
+    getById(1000);
   }
 
   void clear() {
@@ -37,6 +39,12 @@ class AssistanceProvider with ChangeNotifier {
   }
 
   List<Assistance> get items {
-    return _items.map((a) => a.values.toList()[0] as Assistance).toList();
+    return [..._items];
+  }
+
+  Assistance getById(int id){
+    final assistance = items.firstWhere((a) => a.id == id);
+  
+    return assistance is Assistance ? assistance : null;
   }
 }

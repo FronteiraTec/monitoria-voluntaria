@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import '../../general_widgets/CustomDialog.dart';
 import './widgets/assistance_detail_bar.dart';
 import './widgets/assistance_detail_text.dart';
 import './widgets/my_sliver_app_bar.dart';
@@ -23,30 +24,14 @@ class AssitanceDetailScreen extends StatelessWidget {
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) =>
             [
-          MySliverAppBar(
-            title: assistance.title,
-            imageUrl: assistance.course.imageUrl,
-            image: assistance.course.imageWidget,
-          ),
+          MySliverAppBar(assistance),
         ],
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              AssistanceTitleName(assistanceName: assistance.title),
-              // Divider(),
-
-              AssistenceDetailBar(
-                date: assistance.date.toString().substring(8, 10) +
-                    "/" +
-                    assistance.date.toString().substring(5, 7),
-                hour: assistance.date.toString().substring(11, 16),
-                local: "Local",
-                numberOpenings: assistance.numberParticipants.toString(),
-              ),
-
-              UserProfile(),
-
+              HorizontalCard(),
               AssistanceDetailText(assistanceDetail: assistance.description),
+              UserProfileImage(assistance: assistance),
             ],
           ),
         ),
@@ -55,45 +40,109 @@ class AssitanceDetailScreen extends StatelessWidget {
   }
 }
 
-class UserProfile extends StatelessWidget {
-  const UserProfile({
+class UserProfileImage extends StatelessWidget {
+  const UserProfileImage({
     Key key,
+    @required this.assistance,
   }) : super(key: key);
+
+  final Assistance assistance;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(left: 10, top: 1, right: 15),
+      margin: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: <Widget>[
-          CircleAvatar(
-            child: Icon(Icons.account_circle),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 15),
-            child: Text(
-              "Guilherme Sabino",
-              style: TextStyle(fontSize: 18),
+          ClipOval(
+            child: Container(
+              width: 50,
+              height: 50,
+              margin: const EdgeInsets.only(left: 15),
+              child: ClipOval(
+                child: FadeInImage.assetNetwork(
+                  placeholder: 'assets/images/avatarPlaceholder.jpg',
+                  image: 'https://placekitten.com/400/400',
+                ),
+              ),
             ),
           ),
-          Spacer(),
           Container(
-              margin: EdgeInsets.only(right: 5),
-              child: Icon(Icons.verified_user))
+              margin: EdgeInsets.only(left: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    assistance.owner.name,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(assistance.course.name)
+                ],
+              ))
         ],
       ),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            width: 1,
-            color: Color.fromRGBO(220, 220, 220, 0.9),
-          ),
-          bottom:
-              BorderSide(width: 1, color: Color.fromRGBO(220, 220, 220, 0.9)),
-        ),
-      ),
-      height: MediaQuery.of(context).size.height * 0.12,
     );
+  }
+}
+
+
+class Consts {
+  Consts._();
+
+  static const double padding = 16.0;
+  static const double avatarRadius = 66.0;
+}
+
+//https://www.flaticon.com/br/icone-gratis/placeholder_148845 Pin Icon
+//https://www.flaticon.com/br/icone-gratis/procurar_2489079?term=people&page=2&position=30 people icon
+//https://www.flaticon.com/br/icone-gratis/calendario_2738407?term=calendar&page=1&position=11 calendar icon
+//https://www.flaticon.com/br/icone-gratis/garantia_1156677?term=badge&page=1&position=59 badge
+//https://www.flaticon.com/br/icone-gratis/relogio_129478?term=hour&page=1&position=11 glass
+//https://www.flaticon.com/br/icone-gratis/notas_1355663?term=notebook&page=1&position=2 notebook
+class HorizontalCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final _icons = [
+      {
+        "image": "assets/images/icons/watch.png",
+        "function": () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => CustomDialog(title: "Horário", description: "Teste de texto", buttonText: "Fechar", image: Image.asset("assets/images/icons/watch.png",)));
+        }
+      },
+      {"image": "assets/images/icons/calendar.png", "function": () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => CustomDialog(title: "Horário", description: "Teste de texto", buttonText: "Fechar", ));
+        }},
+      {"image": "assets/images/icons/location.png", "function": null},
+      {"image": "assets/images/icons/notepad.png", "function": null},
+      {"image": "assets/images/icons/people.png", "function": null},
+      {"image": "assets/images/icons/badge.png", "function": null},
+    ];
+
+    return Container(
+        height: 100.0,
+        margin: const EdgeInsets.symmetric(vertical: 20),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: _icons.length,
+          itemBuilder: (ctx, i) => Container(
+            decoration:
+                BoxDecoration(shape: BoxShape.circle, color: Color(0xFFe0f2f1)),
+            padding: const EdgeInsets.all(18),
+            child: Container(
+              width: 80,
+              height: 80,
+              child: InkWell(
+                onTap: _icons[i]["function"],
+                child: Image.asset(
+                  _icons[i]["image"],
+                ),
+              ),
+            ),
+          ),
+        ));
   }
 }

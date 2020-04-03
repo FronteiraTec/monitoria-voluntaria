@@ -47,9 +47,14 @@ flutter:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
   assets:
-    - assets/images/old-books.jpg
     - assets/images/avatarPlaceholder.jpg
     - assets/images/placeholder_highlight.png
+    - assets/images/icons/badge.png
+    - assets/images/icons/calendar.png
+    - assets/images/icons/location.png
+    - assets/images/icons/notepad.png
+    - assets/images/icons/people.png
+    - assets/images/icons/watch.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

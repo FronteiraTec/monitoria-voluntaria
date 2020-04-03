@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
 
-class MySliverAppBar extends StatelessWidget {
-  final String title;
-  final String imageUrl;
-  final Image image;
+import '../../../models/assistanceModel.dart';
 
-  const MySliverAppBar({
-    Key key,
-    @required this.imageUrl,
-    @required this.title,
-    @required this.image,
-  }) : super(key: key);
+class MySliverAppBar extends StatelessWidget {
+  final Assistance assistance;
+
+  MySliverAppBar(this.assistance);
 
   @override
   Widget build(BuildContext context) {
-    // var fadeInImage = FadeInImage.assetNetwork(
-    //           placeholder: 'assets/images/placeholder_highlight.png',
-    //           image: imageUrl,
-    //           fit: BoxFit.cover,
-    //         );
     return SliverOverlapAbsorber(
       handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
       child: SliverSafeArea(
@@ -28,12 +18,20 @@ class MySliverAppBar extends StatelessWidget {
           floating: false,
           forceElevated: false,
           pinned: true,
-        title: Text(title),
           flexibleSpace: FlexibleSpaceBar(
-            centerTitle: true,
-            background: image,//fadeInImage,
+            centerTitle: false,
+            // collapseMode: CollapseMode.parallax,
+            title: Text(assistance.title,
+                style: TextStyle(
+                  color: Colors.white, 
+                  fontSize: 20.0,
+                )),
+            background: assistance.course.image,
           ),
         ),
+
+
+
       ),
     );
   }
