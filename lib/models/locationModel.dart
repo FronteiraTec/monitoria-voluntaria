@@ -11,8 +11,8 @@ class Location {
   final String reference;
 
   Location({
-    this.latitude,
-    this.longitude,
+    @required this.latitude,
+    @required this.longitude,
     @required this.street,
     @required this.complement,
     @required this.number,
@@ -29,6 +29,8 @@ class Location {
       id: map["address_id"],
       nickname: map["address_nickname"],
       reference: map["address_reference"],
+      latitude: -23.201,
+      longitude: -46.93716667,
     );
     // return null;
   }

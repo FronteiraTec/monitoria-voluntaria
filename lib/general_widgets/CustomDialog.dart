@@ -6,15 +6,16 @@ class CustomDialog extends StatelessWidget {
 
   final Text titleWidget;
   final Widget descriptionWidget;
+  final secondButtonWidget;
   // String buttonText;
 
-  CustomDialog({this.title, this.description, this.buttonText, this.image, this.descriptionWidget, this.titleWidget});
+  CustomDialog({this.secondButtonWidget, this.title, this.description, this.buttonText, this.image, this.descriptionWidget, this.titleWidget});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 0,
-      backgroundColor: Colors.transparent,
+backgroundColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Consts.padding),
       ),
@@ -67,14 +68,30 @@ class CustomDialog extends StatelessWidget {
                     )
                   : descriptionWidget,
               SizedBox(height: 24.0),
+              secondButtonWidget == null ? 
+               Align(
+                alignment: Alignment.bottomRight,
+                child:  FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                    child: Text(buttonText),
+                  ),
+              )
+              :
               Align(
                 alignment: Alignment.bottomRight,
-                child: FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // To close the dialog
-                  },
-                  child: Text(buttonText),
-                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    secondButtonWidget,
+                    FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                    child: Text(buttonText),
+                  ),
+                  ]),
               )
             ],
           ),
@@ -83,7 +100,7 @@ class CustomDialog extends StatelessWidget {
           left: Consts.padding,
           right: Consts.padding,
           child: CircleAvatar(
-            backgroundColor: Colors.blueAccent,
+            backgroundColor: Colors.transparent,
             radius: 66,
             child: image,
           ),
