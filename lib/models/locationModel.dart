@@ -9,29 +9,36 @@ class Location {
   final int id;
   final String nickname;
   final String reference;
+  final String cep;
+
 
   Location({
-    @required this.latitude,
-    @required this.longitude,
-    @required this.street,
-    @required this.complement,
-    @required this.number,
-    @required this.id,
-    @required this.nickname,
-    @required this.reference,
+    this.latitude,
+    this.longitude,
+    this.street,
+    this.complement,
+    this.number,
+    this.id,
+    this.nickname,
+    this.reference,
+    this.cep,
+
   });
 
   static Location parseFromMap(Map<String, dynamic> map) {
     return Location(
-      street: map["address_street"],
-      complement: map["address_complement"],
-      number: map["address_number"],
-      id: map["address_id"],
-      nickname: map["address_nickname"],
-      reference: map["address_reference"],
-      latitude: -23.201,
-      longitude: -46.93716667,
+
+      id: map["id"],
+      street: map["street"],
+      complement: map["complement"],
+      number: map["number"],
+      nickname: map["nickname"],
+      reference: map["reference"],
+      // latitude: map["latitude"],
+      // longitude: map["logintude"],
+      longitude: 5555,
+      latitude: 8888,
+      cep: map["cep"]
     );
-    // return null;
   }
 }

@@ -18,18 +18,18 @@ class AssistanceProvider with ChangeNotifier {
         {"offset": offset.toString(), "limit": _limit.toString()});
 
     final assistancesJson = res["body"] as List;
-
-    final assistanceList = assistancesJson
-        .map(
-          (assistance) => Assistance.parseFromMap(assistance),
-        )
-        .toList();
+    
+    final assistanceList = assistancesJson.map((assistance) {
+        return Assistance.parseFromMap(assistance["assistance"]);
+    }).toList();
 
     assistanceList
         .forEach((a) => a.course.cacheImage(context));
+    improve_assistance_list
 
     _items = _items + assistanceList;
     notifyListeners();
+
   }
 
   void clear() {
@@ -38,11 +38,13 @@ class AssistanceProvider with ChangeNotifier {
 
   List<Assistance> get items {
     return [..._items];
+
   }
 
   Assistance getById(int id){
     final assistance = items.firstWhere((a) => a.id == id);
   
     return assistance is Assistance ? assistance : null;
+
   }
 }
