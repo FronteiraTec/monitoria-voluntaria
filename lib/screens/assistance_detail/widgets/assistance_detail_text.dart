@@ -11,8 +11,8 @@ class AssistanceDetailText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(12),
-      padding: EdgeInsets.all(3),
+      margin: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+      padding: const EdgeInsets.all(5.0),
       width: double.infinity,
       child: Text(
         assistanceDetail,

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import '../models/assistanceModel.dart';
 
 import '../helpers/httpHelper.dart';
+import '../models/assistanceModel.dart';
 
 class AssistanceProvider with ChangeNotifier {
   static const _baseUrl = "131.108.55.50:3000";
@@ -18,11 +19,13 @@ class AssistanceProvider with ChangeNotifier {
 
     final assistancesJson = res["body"] as List;
     
-    
     final assistanceList = assistancesJson.map((assistance) {
         return Assistance.parseFromMap(assistance["assistance"]);
     }).toList();
 
+    assistanceList
+        .forEach((a) => a.course.cacheImage(context));
+    improve_assistance_list
 
     _items = _items + assistanceList;
     notifyListeners();
@@ -35,5 +38,13 @@ class AssistanceProvider with ChangeNotifier {
 
   List<Assistance> get items {
     return [..._items];
+
+  }
+
+  Assistance getById(int id){
+    final assistance = items.firstWhere((a) => a.id == id);
+  
+    return assistance is Assistance ? assistance : null;
+
   }
 }

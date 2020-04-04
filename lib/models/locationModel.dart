@@ -22,10 +22,12 @@ class Location {
     this.nickname,
     this.reference,
     this.cep,
+
   });
 
   static Location parseFromMap(Map<String, dynamic> map) {
     return Location(
+
       id: map["id"],
       street: map["street"],
       complement: map["complement"],
