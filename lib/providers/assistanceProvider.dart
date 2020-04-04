@@ -30,6 +30,7 @@ class AssistanceProvider with ChangeNotifier {
 
     _items = _items + assistanceList;
     notifyListeners();
+
   }
 
   void clear() {
