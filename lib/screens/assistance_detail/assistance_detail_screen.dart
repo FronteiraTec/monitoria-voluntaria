@@ -41,7 +41,7 @@ class AssitanceDetailScreen extends StatelessWidget {
                     assistance.date.toString().substring(5, 7),
                 hour: assistance.date.toString().substring(11, 16),
                 local: "Local",
-                numberOpenings: assistance.numberParticipants.toString(),
+                numberOpenings: 10.toString(),//assistance.numberParticipants.toString(),
               ),
 
               UserProfile(),

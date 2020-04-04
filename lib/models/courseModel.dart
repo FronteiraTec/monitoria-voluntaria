@@ -21,9 +21,9 @@ class Course {
 
   static Course parseFromMap(Map<String, dynamic> map){
     return Course(
-      id: map["course_id"],
-      name: map["course_name"],
-      description: map["course_description"],
+      id: map["id"],
+      name: map["name"],
+      description: map["description"],
     );
   }
 
