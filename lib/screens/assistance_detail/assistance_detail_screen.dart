@@ -134,7 +134,7 @@ class FloatingActionDialog extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "Você esta se inscrevendo na monitoria de ${title}, deseja continuar?",
+                              "Você esta se inscrevendo na monitoria de $title, deseja continuar?",
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 18, wordSpacing: 2),
                             ),
@@ -382,10 +382,10 @@ class HorizontalCard extends StatelessWidget {
           title: "Vagas",
           descriptionWidget: Column(
             children: <Widget>[
-              Text("Disponíveis: ${assistance.numberParticipants}",
+              Text("Disponíveis: ${assistance.avaliableVacancies}",
                   style: TextStyle(fontSize: 18)),
               SizedBox(height: 10),
-              Text("Total: 30", style: TextStyle(fontSize: 18)),
+              Text("Total: ${assistance.totalVacancies}", style: TextStyle(fontSize: 18)),
             ],
           )),
       IconsInfo(
