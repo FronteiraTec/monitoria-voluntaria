@@ -3,6 +3,7 @@ import './drawer_widgets/drawer_head.dart';
 import './drawer_widgets/drawer_link.dart';
 
 import 'package:monitoring/screens/Login/sign_in_screen.dart';
+import '../../general_widgets/custom_icons.dart';
 
 class MyDrawer extends StatelessWidget {
   @override
@@ -26,14 +27,11 @@ class MyDrawer extends StatelessWidget {
                     // mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      DrawerLink(name: "Monitorias", routeName: "/", icon: Icons.book),
-                      DrawerLink(name: "Oi", routeName: "/oi"),
-                      DrawerLink(name: "Link 3", routeName: "/"),
-                      DrawerLink(name: "Link 4", routeName: "/"),
-                      DrawerLink(
-                          name: "Entrar",
-                          routeName: SignInScreen.routeName,
-                          icon: Icons.verified_user),
+                      DrawerLink(name: "Monitorias", routeName: "/", icon: CustomIcons.calendar),
+                      DrawerLink(name: "Oi", routeName: "/oi", icon: CustomIcons.database),
+                      DrawerLink(name: "Link 3", routeName: "/", icon: CustomIcons.note),
+                      DrawerLink(name: "Link 4", routeName: "/", icon: CustomIcons.pencil),
+                      DrawerLink(name: "Entrar", routeName: SignInScreen.routeName, icon: CustomIcons.mail),
                     ],
                   ),
                 )

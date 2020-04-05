@@ -14,7 +14,7 @@ class DrawerLink extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: EdgeInsets.only(top: 40),
+      padding: EdgeInsets.only(top: 40, bottom: 10),
       child: InkWell(
         onTap: (){
            Navigator.pop(context);
@@ -27,7 +27,7 @@ class DrawerLink extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Icon(icon != null ? icon : Icons.description),
-              SizedBox(width: 30),
+              SizedBox(width: 25),
               Text(name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),)
             ],),
         ),
