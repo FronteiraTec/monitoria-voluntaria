@@ -29,7 +29,6 @@ class Assistance {
       });
 
   static Assistance parseFromMap(Map<String, dynamic> map) {
-
     return Assistance(
       date: DateTime.parse(map["date"]),
       id: map["id"],

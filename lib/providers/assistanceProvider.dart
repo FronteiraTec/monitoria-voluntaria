@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import '../models/assistanceModel.dart';
 
 import '../helpers/httpHelper.dart';
-import '../models/assistanceModel.dart';
 
 class AssistanceProvider with ChangeNotifier {
   static const _baseUrl = "131.108.55.50:3000";
@@ -25,7 +24,6 @@ class AssistanceProvider with ChangeNotifier {
 
     assistanceList
         .forEach((a) => a.course.cacheImage(context));
-    improve_assistance_list
 
     _items = _items + assistanceList;
     notifyListeners();

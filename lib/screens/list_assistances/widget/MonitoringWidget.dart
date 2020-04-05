@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import '../../../providers/assistanceProvider.dart';
 import '../../../general_widgets/drawer/drawer.dart';
@@ -14,7 +16,7 @@ class MonitoringWidget extends StatelessWidget {
     return Scaffold(
       drawer: MyDrawer(),
       appBar: AppBar(
-        title: Text("Monitoring"),
+        title: Text("Monitorias"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -25,10 +27,10 @@ class MonitoringWidget extends StatelessWidget {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
+        margin: EdgeInsets.only(left: 10, right: 10),
         child: Column(
           children: <Widget>[
-            HorizontalCard(),
+            // HorizontalCard(),
             ScrollableList(),
           ],
         ),
@@ -126,29 +128,143 @@ class _ScrollableListState extends State<ScrollableList> {
 }
 
 class ListItem extends StatelessWidget {
+  final Assistance assistance;
+
   const ListItem({
     Key key,
     @required this.assistance,
   }) : super(key: key);
 
-  final Assistance assistance;
+  String get numericDate {
+    return DateFormat('dd/mm', 'pt_BR').format(assistance.date);
+  }
+
+  List<Color> getColor(id) {
+    final number = id % 10;
+    switch (number) {
+      case 0:
+        return [const Color(0xFFab7bbd), const Color(0xFF27ab50)];
+      case 1:
+        return [const Color(0xFF3A1C71), const Color(0xFFD76D77), const Color(0xFFFFAF7B)];
+        case 2:
+        return [const Color(0xFF283c86), const Color(0xFF45a247)];
+        case 3:
+        return [const Color(0xFFEF3B36), const Color(0xFFFFFFFF)];
+        case 4:
+        return [const Color(0xFFc0392b), const Color(0xFF8e44ad)];
+        case 5:
+        return [const Color(0xFF159957), const Color(0xFF155799)];
+        case 6:
+        return [const Color(0xFF000046), const Color(0xFF1CB5E0)];
+        case 7:
+        return [const Color(0xFF007991), const Color(0xFF78ffd6)];
+        case 8:
+        return [const Color(0xFFF2994A), const Color(0xFFF2C94C)];
+        case 9:
+        return [const Color(0xFF30E8BF), const Color(0xFFFF8235)];
+      default:
+        return [const Color(0xFFD66D75), const Color(0xFFD66D75)];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        assistance.title,
-        style: TextStyle(fontSize: 18),
+    initializeDateFormatting('pt_BR');
+
+    // return InkWell(
+    //   onTap: () {
+    //     print(assistance.id % 10);
+    //   },
+    //       child: Container(
+    //     margin: EdgeInsets.only(bottom: 10, top: 10),
+    //     width: double.infinity,
+    //     decoration: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(13.0),
+    //       gradient: LinearGradient(
+    //           begin: Alignment.topCenter,
+    //           end: Alignment.bottomCenter,
+    //           // 10% of the width, so there are ten blinds.
+    //           colors: getColor(assistance.id) // whitish to gray
+    //           // repeats the gradient over the canvas
+    //           ),
+    //     ),
+    //     child: Column(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: <Widget>[
+    //         Padding(
+    //           padding: const EdgeInsets.only(top: 18, left: 18, bottom: 5),
+    //           child: Text(
+    //             assistance.title,
+    //             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+    //           ),
+    //         ),
+
+    //         Padding(
+    //           padding: const EdgeInsets.only(left: 18, bottom: 18),
+    //           child: Text(
+    //             assistance.course.name,
+    //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: InkWell(
+        onTap: () {
+           Navigator.of(context)
+              .pushNamed(AssitanceDetailScreen.routeName, arguments: assistance);
+        },
+            child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(13.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 18, left: 18, bottom: 5),
+                  child: Text(
+                    assistance.title,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+                  ),
+                ),
+
+                 Padding(
+                  padding: const EdgeInsets.only(left: 18, bottom: 18),
+                  child: Text(
+                    assistance.course.name,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+                  ),
+                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 8, bottom: 8),
+                //   child: Text(
+                //     numericDate,
+                //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+                //   ),
+                // ),
+              ],
+            )),
       ),
-      subtitle: Text(
-        "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}",
-        style: TextStyle(fontSize: 16),
-      ),
-      onTap: () {
-        Navigator.of(context)
-            .pushNamed(AssitanceDetailScreen.routeName, arguments: assistance);
-      },
     );
+    // // return ListTile(
+    //   title: Text(
+    //     assistance.title,
+    //     style: TextStyle(fontSize: 18),
+    //   ),
+    //   subtitle: Text(
+    //     "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}",
+    //     style: TextStyle(fontSize: 16),
+    //   ),
+    //   onTap: () {
+    //     Navigator.of(context)
+    //         .pushNamed(AssitanceDetailScreen.routeName, arguments: assistance);
+    //   },
+    // );
   }
 }
 

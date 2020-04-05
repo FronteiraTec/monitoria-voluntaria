@@ -1,10 +1,11 @@
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 import '../../helpers/MapUtils.dart';
 import '../../general_widgets/CustomDialog.dart';
 import './widgets/assistance_detail_text.dart';
 import './widgets/my_sliver_app_bar.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 import '../../models/assistanceModel.dart';
 
@@ -382,10 +383,10 @@ class HorizontalCard extends StatelessWidget {
           title: "Vagas",
           descriptionWidget: Column(
             children: <Widget>[
-              Text("Disponíveis:",
+              Text("Disponíveis: ${assistance.avaliableVacancies}",
                   style: TextStyle(fontSize: 18)),
               SizedBox(height: 10),
-              Text("Total: 30", style: TextStyle(fontSize: 18)),
+              Text("Total: ${assistance.totalVacancies}", style: TextStyle(fontSize: 18)),
             ],
           )),
       IconsInfo(
