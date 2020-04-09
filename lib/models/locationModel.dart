@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class Location {
   final double latitude;
   final double longitude;

@@ -4,7 +4,13 @@ import 'package:flutter/widgets.dart';
 import '../models/assistanceModel.dart';
 
 import '../helpers/httpHelper.dart';
-import '../models/assistanceModel.dart';
+
+enum Status {
+  none,
+  waiting,
+  error,
+  done
+}
 
 class AssistanceProvider with ChangeNotifier {
   static const _baseUrl = "131.108.55.50:3000";
@@ -13,23 +19,28 @@ class AssistanceProvider with ChangeNotifier {
 
   final http = HttpHelper(_baseUrl);
 
-  Future<void> fetchAssistances(BuildContext context, int offset) async {
-    final res = await http.get("/assistance",
-        {"offset": offset.toString(), "limit": _limit.toString()});
+  Future<Status> fetchAssistances(BuildContext context, int offset) async {
+    try {
+      final res = await http.get("/assistance", {
+        "offset": offset.toString(),
+        "limit": _limit.toString(),
+      });
 
-    final assistancesJson = res["body"] as List;
-    
-    final assistanceList = assistancesJson.map((assistance) {
+      final assistancesJson = res["body"] as List;
+
+      final assistanceList = assistancesJson.map((assistance) {
         return Assistance.parseFromMap(assistance["assistance"]);
-    }).toList();
+      }).toList();
 
-    assistanceList
-        .forEach((a) => a.course.cacheImage(context));
-    improve_assistance_list
+      assistanceList.forEach((a) => a.course.cacheImage(context));
 
-    _items = _items + assistanceList;
-    notifyListeners();
-
+      _items = _items + assistanceList;
+      notifyListeners();
+      
+      return Status.done;
+    } catch (error) {
+      return Status.error;
+    }
   }
 
   void clear() {
@@ -38,13 +49,11 @@ class AssistanceProvider with ChangeNotifier {
 
   List<Assistance> get items {
     return [..._items];
-
   }
 
-  Assistance getById(int id){
+  Assistance getById(int id) {
     final assistance = items.firstWhere((a) => a.id == id);
-  
-    return assistance is Assistance ? assistance : null;
 
+    return assistance is Assistance ? assistance : null;
   }
 }

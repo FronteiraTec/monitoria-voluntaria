@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import '../../../providers/assistanceProvider.dart';
 import '../../../general_widgets/drawer/drawer.dart';
@@ -14,7 +16,7 @@ class MonitoringWidget extends StatelessWidget {
     return Scaffold(
       drawer: MyDrawer(),
       appBar: AppBar(
-        title: Text("Monitoring"),
+        title: Text("Monitorias"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -25,10 +27,9 @@ class MonitoringWidget extends StatelessWidget {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
+        margin: EdgeInsets.only(left: 10, right: 10),
         child: Column(
           children: <Widget>[
-            HorizontalCard(),
             ScrollableList(),
           ],
         ),
@@ -55,119 +56,184 @@ class _ScrollableListState extends State<ScrollableList> {
   }
 
   @override
-  void didChangeDependencies() {
-    if (firstTime) {
-      Provider.of<AssistanceProvider>(context, listen: false).clear();
-      firstTime = false;
-    }
-
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _controller.removeListener(_scrollListener);
     super.dispose();
   }
 
-  _scrollListener() {
+  var loading = true;
+  var fetching = false;
+  var loadedData = true;
+
+  _scrollListener() async {
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
-      Provider.of<AssistanceProvider>(context, listen: false)
+      setState(() {
+        fetching = true;
+      });
+
+      //TODO verificar se houve um erro
+
+      await Provider.of<AssistanceProvider>(context, listen: false)
           .fetchAssistances(context, ++_offset);
+
+      await Future.delayed(Duration(milliseconds: 300));
+
+      setState(() {
+        fetching = false;
+      });
+    }
+  }
+
+  Future<void> _refreshProducts(BuildContext context) async {
+    setState(() {
+      loading = true;
+    });
+
+    Provider.of<AssistanceProvider>(context, listen: false).clear();
+
+    await Provider.of<AssistanceProvider>(context, listen: false)
+        .fetchAssistances(context, 0);
+
+    await Future.delayed(Duration(milliseconds: 300));
+
+    setState(() {
+      loading = false;
+    });
+    _offset = 1;
+  }
+
+  Future<void> executeAfterBuild() async {
+    // this code will get executed after the build method
+    // because of the way async functions are scheduled
+
+    if (firstTime) {
+      setState(() {
+        loading = true;
+      });
+
+      Provider.of<AssistanceProvider>(context, listen: false).clear();
+      final status =
+          await Provider.of<AssistanceProvider>(context, listen: false)
+              .fetchAssistances(context, _offset++);
+
+      if (status == Status.done) {
+        setState(() {
+          firstTime = false;
+          loading = false;
+        });
+
+      } else {
+        setState(() {
+          loadedData = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: FutureBuilder(
-        future: _offset == 0
-            ? Provider.of<AssistanceProvider>(context, listen: false)
-                .fetchAssistances(context, _offset++)
-            : Future.delayed(Duration(seconds: 0)),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              break;
-            case ConnectionState.waiting:
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-              break;
-            case ConnectionState.active:
-              break;
-            case ConnectionState.done:
-              if (snapshot.hasError) {
-                return Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 60,
-                );
-              } else {
-                return Consumer<AssistanceProvider>(
-                  builder: (ctx, data, ch) => ListView.builder(
-                    controller: _controller,
-                    itemCount: data.items.length,
-                    itemBuilder: (context, i) {
-                      final assistance = data.items[i];
-                      return ListItem(assistance: assistance);
-                    },
+    executeAfterBuild();
+
+    return loadedData != true
+        ? Expanded(
+            child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.error_outline, size: 40),
+                SizedBox(height: 10),
+                Text("Verifique sua conexão com a internet")
+              ],
+            ),
+          ))
+        : Expanded(
+            child: Column(children: <Widget>[
+              loading
+                  ? Expanded(child: Center(child: CircularProgressIndicator()))
+                  : Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          _refreshProducts(context);
+                        },
+                        child: Consumer<AssistanceProvider>(
+                          builder: (ctx, data, ch) => ListView.builder(
+                            controller: _controller,
+                            // physics: BouncingScrollPhysics(),
+                            itemCount: data.items.length,
+                            itemBuilder: (context, i) {
+                              final assistance = data.items[i];
+                              return ListItem(assistance: assistance);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+              if (fetching)
+                // Container(margin: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        height: 60,
+                        width: double.infinity,
+                        color: Colors.white,
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    ],
                   ),
-                );
-              }
-          }
-          //TODO: implement this return
-          return Container();
-        },
-      ),
-    );
+                )
+            ]),
+          );
   }
 }
 
 class ListItem extends StatelessWidget {
+  final Assistance assistance;
+
   const ListItem({
     Key key,
     @required this.assistance,
   }) : super(key: key);
 
-  final Assistance assistance;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        assistance.title,
-        style: TextStyle(fontSize: 18),
-      ),
-      subtitle: Text(
-        "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}",
-        style: TextStyle(fontSize: 16),
-      ),
-      onTap: () {
-        Navigator.of(context)
-            .pushNamed(AssitanceDetailScreen.routeName, arguments: assistance);
-      },
-    );
+  String get numericDate {
+    return DateFormat('dd/mm', 'pt_BR').format(assistance.date);
   }
-}
 
-class HorizontalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 80.0,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: List.generate(
-          10,
-          (int index) => Card(
-            color: Colors.blue[index * 100],
-            child: Container(
-              width: 50.0,
-              height: 50.0,
-              child: Text("$index"),
-            ),
+    initializeDateFormatting('pt_BR');
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(AssitanceDetailScreen.routeName,
+              arguments: assistance);
+        },
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 18, left: 18, bottom: 5),
+                child: Text(
+                  assistance.title,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 18, bottom: 18),
+                child: Text(
+                  assistance.course.name,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+                ),
+              ),
+            ],
           ),
         ),
       ),
