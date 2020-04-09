@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:monitoring/general_widgets/drawer/drawer.dart';
 
 class SignInScreen extends StatefulWidget {
   static const String routeName = "/login";
@@ -17,17 +18,19 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Entrar",
-            style: TextStyle(
-              //Exemplo de como usar o tema
-              // color: Theme.of(context).primaryColorLight,
-              fontSize: 20,
-            ),
-          ),
-          backgroundColor: Theme.of(context).primaryColor,
-        ),
+      drawer: MyDrawer(),
+      appBar: AppBar(),
+        // appBar: AppBar(
+        //   // title: Text(
+        //   //   "Entrar",
+        //   //   style: TextStyle(
+        //   //     //Exemplo de como usar o tema
+        //   //     // color: Theme.of(context).primaryColorLight,
+        //   //     fontSize: 20,
+        //   //   ),
+        //   ),
+          // backgroundColor: Theme.of(context).primaryColor,
+        // ),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,

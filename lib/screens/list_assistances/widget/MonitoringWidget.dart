@@ -56,73 +56,126 @@ class _ScrollableListState extends State<ScrollableList> {
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    if (firstTime) {
-      Provider.of<AssistanceProvider>(context, listen: false).clear();
-      firstTime = false;
-    }
+  // @override
+  // void didChangeDependencies() {
 
-    super.didChangeDependencies();
-  }
+  //   }
+
+  //   super.didChangeDependencies();
+  // }
 
   @override
   void dispose() {
     _controller.removeListener(_scrollListener);
+    // Provider.of<AssistanceProvider>(context, listen: false).clear();
     super.dispose();
   }
 
-  _scrollListener() {
+  var loading = true;
+  var fetching = false;
+
+  _scrollListener() async {
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
-      Provider.of<AssistanceProvider>(context, listen: false)
+      setState(() {
+        fetching = true;
+      });
+
+      await Provider.of<AssistanceProvider>(context, listen: false)
           .fetchAssistances(context, ++_offset);
+
+      await Future.delayed(Duration(milliseconds: 300));
+
+      setState(() {
+        fetching = false;
+      });
+    }
+  }
+
+  Future<void> _refreshProducts(BuildContext context) async {
+    setState(() {
+      loading = true;
+    });
+
+    Provider.of<AssistanceProvider>(context, listen: false).clear();
+    await Provider.of<AssistanceProvider>(context, listen: false)
+        .fetchAssistances(context, 0);
+
+    await Future.delayed(Duration(milliseconds: 300));
+
+    setState(() {
+      loading = false;
+    });
+    _offset = 1;
+    //  await Future.delayed(Duration(seconds: 5));
+
+    // await Provider.of<ProducstsProvider>(context, listen: false).fetchAndSetProducts();
+  }
+
+  Future<void> executeAfterBuild() async {
+    // this code will get executed after the build method
+    // because of the way async functions are scheduled
+
+    if (firstTime) {
+      setState(() {
+        loading = true;
+      });
+
+      Provider.of<AssistanceProvider>(context, listen: false).clear();
+      await Provider.of<AssistanceProvider>(context, listen: false)
+          .fetchAssistances(context, _offset++)
+          .then((_) {
+        setState(() {
+          firstTime = false;
+          loading = false;
+        });
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    executeAfterBuild();
+
     return Expanded(
-      child: FutureBuilder(
-        future: _offset == 0
-            ? Provider.of<AssistanceProvider>(context, listen: false)
-                .fetchAssistances(context, _offset++)
-            : Future.delayed(Duration(seconds: 0)),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              break;
-            case ConnectionState.waiting:
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-              break;
-            case ConnectionState.active:
-              break;
-            case ConnectionState.done:
-              if (snapshot.hasError) {
-                return Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 60,
-                );
-              } else {
-                return Consumer<AssistanceProvider>(
-                  builder: (ctx, data, ch) => ListView.builder(
-                    controller: _controller,
-                    itemCount: data.items.length,
-                    itemBuilder: (context, i) {
-                      final assistance = data.items[i];
-                      return ListItem(assistance: assistance);
-                    },
+      child: Column(children: <Widget>[
+        loading
+            ? Expanded(child: Center(child: CircularProgressIndicator()))
+            : Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    print("object");
+                    _refreshProducts(context);
+                  },
+                  child: Consumer<AssistanceProvider>(
+                    builder: (ctx, data, ch) => ListView.builder(
+                      controller: _controller,
+                      // physics: BouncingScrollPhysics(),
+                      itemCount: data.items.length,
+                      itemBuilder: (context, i) {
+                        final assistance = data.items[i];
+                        return ListItem(assistance: assistance);
+                      },
+                    ),
                   ),
-                );
-              }
-          }
-          //TODO: implement this return
-          return Container();
-        },
-      ),
+                ),
+              ),
+        if (fetching)
+          // Container(margin: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: 60,
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ],
+            ),
+          )
+      ]),
     );
   }
 }
@@ -139,151 +192,39 @@ class ListItem extends StatelessWidget {
     return DateFormat('dd/mm', 'pt_BR').format(assistance.date);
   }
 
-  List<Color> getColor(id) {
-    final number = id % 10;
-    switch (number) {
-      case 0:
-        return [const Color(0xFFab7bbd), const Color(0xFF27ab50)];
-      case 1:
-        return [const Color(0xFF3A1C71), const Color(0xFFD76D77), const Color(0xFFFFAF7B)];
-        case 2:
-        return [const Color(0xFF283c86), const Color(0xFF45a247)];
-        case 3:
-        return [const Color(0xFFEF3B36), const Color(0xFFFFFFFF)];
-        case 4:
-        return [const Color(0xFFc0392b), const Color(0xFF8e44ad)];
-        case 5:
-        return [const Color(0xFF159957), const Color(0xFF155799)];
-        case 6:
-        return [const Color(0xFF000046), const Color(0xFF1CB5E0)];
-        case 7:
-        return [const Color(0xFF007991), const Color(0xFF78ffd6)];
-        case 8:
-        return [const Color(0xFFF2994A), const Color(0xFFF2C94C)];
-        case 9:
-        return [const Color(0xFF30E8BF), const Color(0xFFFF8235)];
-      default:
-        return [const Color(0xFFD66D75), const Color(0xFFD66D75)];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting('pt_BR');
-
-    // return InkWell(
-    //   onTap: () {
-    //     print(assistance.id % 10);
-    //   },
-    //       child: Container(
-    //     margin: EdgeInsets.only(bottom: 10, top: 10),
-    //     width: double.infinity,
-    //     decoration: BoxDecoration(
-    //       borderRadius: BorderRadius.circular(13.0),
-    //       gradient: LinearGradient(
-    //           begin: Alignment.topCenter,
-    //           end: Alignment.bottomCenter,
-    //           // 10% of the width, so there are ten blinds.
-    //           colors: getColor(assistance.id) // whitish to gray
-    //           // repeats the gradient over the canvas
-    //           ),
-    //     ),
-    //     child: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: <Widget>[
-    //         Padding(
-    //           padding: const EdgeInsets.only(top: 18, left: 18, bottom: 5),
-    //           child: Text(
-    //             assistance.title,
-    //             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
-    //           ),
-    //         ),
-
-    //         Padding(
-    //           padding: const EdgeInsets.only(left: 18, bottom: 18),
-    //           child: Text(
-    //             assistance.course.name,
-    //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
 
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: InkWell(
         onTap: () {
-           Navigator.of(context)
-              .pushNamed(AssitanceDetailScreen.routeName, arguments: assistance);
+          Navigator.of(context).pushNamed(AssitanceDetailScreen.routeName,
+              arguments: assistance);
         },
-            child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(13.0),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 18, left: 18, bottom: 5),
-                  child: Text(
-                    assistance.title,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
-                  ),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 18, left: 18, bottom: 5),
+                child: Text(
+                  assistance.title,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
                 ),
-
-                 Padding(
-                  padding: const EdgeInsets.only(left: 18, bottom: 18),
-                  child: Text(
-                    assistance.course.name,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 18, bottom: 18),
+                child: Text(
+                  assistance.course.name,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 8, bottom: 8),
-                //   child: Text(
-                //     numericDate,
-                //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
-                //   ),
-                // ),
-              ],
-            )),
-      ),
-    );
-    // // return ListTile(
-    //   title: Text(
-    //     assistance.title,
-    //     style: TextStyle(fontSize: 18),
-    //   ),
-    //   subtitle: Text(
-    //     "${assistance.id} Data: ${assistance.date.day.toString()}/${assistance.date.month.toString()}/${assistance.date.year.toString()}\nHora: ${assistance.date.hour.toString()}:${assistance.date.minute.toString()}",
-    //     style: TextStyle(fontSize: 16),
-    //   ),
-    //   onTap: () {
-    //     Navigator.of(context)
-    //         .pushNamed(AssitanceDetailScreen.routeName, arguments: assistance);
-    //   },
-    // );
-  }
-}
-
-class HorizontalCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 80.0,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: List.generate(
-          10,
-          (int index) => Card(
-            color: Colors.blue[index * 100],
-            child: Container(
-              width: 50.0,
-              height: 50.0,
-              child: Text("$index"),
-            ),
+              ),
+            ],
           ),
         ),
       ),
