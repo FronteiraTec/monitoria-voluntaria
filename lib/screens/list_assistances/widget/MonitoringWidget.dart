@@ -30,7 +30,6 @@ class MonitoringWidget extends StatelessWidget {
         margin: EdgeInsets.only(left: 10, right: 10),
         child: Column(
           children: <Widget>[
-            // HorizontalCard(),
             ScrollableList(),
           ],
         ),
@@ -56,23 +55,15 @@ class _ScrollableListState extends State<ScrollableList> {
     super.initState();
   }
 
-  // @override
-  // void didChangeDependencies() {
-
-  //   }
-
-  //   super.didChangeDependencies();
-  // }
-
   @override
   void dispose() {
     _controller.removeListener(_scrollListener);
-    // Provider.of<AssistanceProvider>(context, listen: false).clear();
     super.dispose();
   }
 
   var loading = true;
   var fetching = false;
+  var loadedData = true;
 
   _scrollListener() async {
     if (_controller.offset >= _controller.position.maxScrollExtent &&
@@ -80,6 +71,8 @@ class _ScrollableListState extends State<ScrollableList> {
       setState(() {
         fetching = true;
       });
+
+      //TODO verificar se houve um erro
 
       await Provider.of<AssistanceProvider>(context, listen: false)
           .fetchAssistances(context, ++_offset);
@@ -98,6 +91,7 @@ class _ScrollableListState extends State<ScrollableList> {
     });
 
     Provider.of<AssistanceProvider>(context, listen: false).clear();
+
     await Provider.of<AssistanceProvider>(context, listen: false)
         .fetchAssistances(context, 0);
 
@@ -107,9 +101,6 @@ class _ScrollableListState extends State<ScrollableList> {
       loading = false;
     });
     _offset = 1;
-    //  await Future.delayed(Duration(seconds: 5));
-
-    // await Provider.of<ProducstsProvider>(context, listen: false).fetchAndSetProducts();
   }
 
   Future<void> executeAfterBuild() async {
@@ -122,14 +113,21 @@ class _ScrollableListState extends State<ScrollableList> {
       });
 
       Provider.of<AssistanceProvider>(context, listen: false).clear();
-      await Provider.of<AssistanceProvider>(context, listen: false)
-          .fetchAssistances(context, _offset++)
-          .then((_) {
+      final status =
+          await Provider.of<AssistanceProvider>(context, listen: false)
+              .fetchAssistances(context, _offset++);
+
+      if (status == Status.done) {
         setState(() {
           firstTime = false;
           loading = false;
         });
-      });
+
+      } else {
+        setState(() {
+          loadedData = false;
+        });
+      }
     }
   }
 
@@ -137,46 +135,57 @@ class _ScrollableListState extends State<ScrollableList> {
   Widget build(BuildContext context) {
     executeAfterBuild();
 
-    return Expanded(
-      child: Column(children: <Widget>[
-        loading
-            ? Expanded(child: Center(child: CircularProgressIndicator()))
-            : Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    print("object");
-                    _refreshProducts(context);
-                  },
-                  child: Consumer<AssistanceProvider>(
-                    builder: (ctx, data, ch) => ListView.builder(
-                      controller: _controller,
-                      // physics: BouncingScrollPhysics(),
-                      itemCount: data.items.length,
-                      itemBuilder: (context, i) {
-                        final assistance = data.items[i];
-                        return ListItem(assistance: assistance);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-        if (fetching)
-          // Container(margin: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            child: Stack(
+    return loadedData != true
+        ? Expanded(
+            child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  height: 60,
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+                Icon(Icons.error_outline, size: 40),
+                SizedBox(height: 10),
+                Text("Verifique sua conexão com a internet")
               ],
             ),
-          )
-      ]),
-    );
+          ))
+        : Expanded(
+            child: Column(children: <Widget>[
+              loading
+                  ? Expanded(child: Center(child: CircularProgressIndicator()))
+                  : Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          _refreshProducts(context);
+                        },
+                        child: Consumer<AssistanceProvider>(
+                          builder: (ctx, data, ch) => ListView.builder(
+                            controller: _controller,
+                            // physics: BouncingScrollPhysics(),
+                            itemCount: data.items.length,
+                            itemBuilder: (context, i) {
+                              final assistance = data.items[i];
+                              return ListItem(assistance: assistance);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+              if (fetching)
+                // Container(margin: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        height: 60,
+                        width: double.infinity,
+                        color: Colors.white,
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    ],
+                  ),
+                )
+            ]),
+          );
   }
 }
 
